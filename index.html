@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#10284a">
+  <title>مولد كشوف السداد</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <button id="menuBtn" class="icon-btn" aria-label="القائمة">☰</button>
+  <div class="top-title">مولد كشوف السداد</div>
+  <div class="top-actions">
+    <button class="ghost-btn" data-page="new">+ كشف جديد</button>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-logo">KE</div>
+      <div><strong>KHALID ELNUOR</strong><small>AI AUTOMATION & DIGITAL SOLUTIONS</small></div>
+    </div>
+    <nav>
+      <button class="nav active" data-page="dashboard">لوحة التحكم</button>
+      <button class="nav" data-page="new">إنشاء كشف</button>
+      <button class="nav" data-page="records">الكشوف</button>
+      <button class="nav" data-page="customers">العملاء</button>
+      <button class="nav" data-page="settings">الإعدادات</button>
+    </nav>
+    <div class="side-note">يعمل محليًا على جهازك باستخدام LocalStorage.</div>
+  </aside>
+
+  <main class="main">
+    <section id="dashboard" class="page active">
+      <div class="page-head">
+        <div><h1>لوحة التحكم</h1><p>إدارة العملاء والكشوف وحفظها على هذا الجهاز.</p></div>
+        <button class="primary-btn" data-page="new">+ إنشاء كشف</button>
+      </div>
+      <div class="stats">
+        <div class="stat"><span>إجمالي الكشوف</span><b id="statInvoices">0</b></div>
+        <div class="stat"><span>مستحقة</span><b id="statPending">0</b></div>
+        <div class="stat"><span>مدفوعة</span><b id="statPaid">0</b></div>
+        <div class="stat"><span>العملاء</span><b id="statCustomers">0</b></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2>آخر الكشوف</h2><button class="link-btn" data-page="records">عرض الكل</button></div>
+        <div id="recent"></div>
+      </div>
+    </section>
+
+    <section id="new" class="page">
+      <div class="page-head">
+        <div><h1 id="newTitle">إنشاء كشف سداد</h1><p>أنشئ كشفًا غير رسمي واحفظه أو اطبعه PDF.</p></div>
+        <div class="head-actions">
+          <button id="clearBtn" class="secondary-btn">مسح</button>
+          <button id="saveBtn" class="primary-btn">حفظ الكشف</button>
+          <button id="printBtn" class="primary-btn">طباعة / حفظ PDF</button>
+        </div>
+      </div>
+
+      <div class="editor-grid">
+        <div class="card form-card">
+          <div class="card-head"><h2>بيانات الكشف</h2></div>
+          <label>العميل
+            <div class="inline">
+              <select id="customerSelect"></select>
+              <button id="addCustomerBtn" class="secondary-btn">+ عميل</button>
+            </div>
+          </label>
+          <label>رقم الحساب<input id="fAccount" type="text" placeholder="مثال: ACC-DF-..."></label>
+          <div class="two">
+            <label>رقم الكشف<input id="fNumber" type="text" readonly></label>
+            <label>الحالة<select id="fStatus">
+              <option value="PENDING">مستحق الدفع</option>
+              <option value="PAID">مدفوع</option>
+              <option value="CANCELLED">ملغي</option>
+            </select></label>
+          </div>
+          <label>الخدمة / البيان<input id="fService" type="text" value="تجديد الاشتراك الشهري"></label>
+          <div class="two">
+            <label>المبلغ الأصلي<input id="fOriginal" type="number" min="0" step="0.01" value="100"></label>
+            <label>العملة الأصلية<select id="fCurrency">
+              <option>USD</option><option>SDG</option><option>XAF</option><option>SAR</option><option>EUR</option>
+            </select></label>
+          </div>
+          <div class="two">
+            <label>المبلغ بالدولار<input id="fUSD" type="number" min="0" step="0.01" value="100"></label>
+            <label>سعر الصرف<input id="fRate" type="number" min="0" step="0.01" value="8940"></label>
+          </div>
+          <label>ملاحظات<textarea id="fNote" rows="4"></textarea></label>
+          <div class="template-row">
+            <span>القالب</span>
+            <button class="chip active" data-template="classic">كلاسيكي</button>
+            <button class="chip" data-template="clean">بسيط</button>
+            <button class="chip" data-template="formal">رسمي</button>
+          </div>
+        </div>
+
+        <div class="card preview-card">
+          <div class="card-head"><h2>المعاينة</h2><span class="muted">A4</span></div>
+          <div id="invoicePreview"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="records" class="page">
+      <div class="page-head">
+        <div><h1>الكشوف</h1><p>بحث وتعديل وطباعة وحذف الكشوف المحفوظة.</p></div>
+        <button class="primary-btn" data-page="new">+ كشف جديد</button>
+      </div>
+      <div class="card">
+        <input id="recordSearch" class="search" placeholder="ابحث برقم الكشف أو اسم العميل أو الحساب">
+        <div id="recordsTable"></div>
+      </div>
+    </section>
+
+    <section id="customers" class="page">
+      <div class="page-head">
+        <div><h1>العملاء</h1><p>حفظ بيانات العملاء لاستخدامها عند إنشاء كشف جديد.</p></div>
+        <button id="addCustomerBtn2" class="primary-btn">+ إضافة عميل</button>
+      </div>
+      <div class="card">
+        <input id="customerSearch" class="search" placeholder="ابحث عن عميل أو حساب">
+        <div id="customersTable"></div>
+      </div>
+    </section>
+
+    <section id="settings" class="page">
+      <div class="page-head"><div><h1>الإعدادات</h1><p>بيانات مقدم الخدمة والنص الظاهر في الكشف.</p></div></div>
+      <div class="card settings-card">
+        <label>اسم مقدم الخدمة<input id="sName"></label>
+        <label>الوصف<input id="sDesc"></label>
+        <label>اسم الخدمة / الجهة<input id="sProvider"></label>
+        <label>التنبيه / إخلاء المسؤولية<textarea id="sDisclaimer" rows="4"></textarea></label>
+        <div class="settings-actions">
+          <button id="saveSettingsBtn" class="primary-btn">حفظ الإعدادات</button>
+          <button id="resetBtn" class="danger-btn">إعادة ضبط البيانات المحلية</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="modal" class="modal" aria-hidden="true">
+  <div class="modal-box">
+    <div class="modal-head"><h2>إضافة عميل</h2><button id="closeModal" class="icon-btn">×</button></div>
+    <label>اسم العميل<input id="mName"></label>
+    <label>رقم الحساب<input id="mAccount"></label>
+    <label>الهاتف<input id="mPhone"></label>
+    <div class="modal-actions"><button id="cancelCustomer" class="secondary-btn">إلغاء</button><button id="addCustomer" class="primary-btn">حفظ العميل</button></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
